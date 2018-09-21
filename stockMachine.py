@@ -203,28 +203,39 @@ def stockMachine():
 
             try:
                 #%% Calculate the stock people's STDev using stockSTD/categorySTD
-                riskURL = "http://finance.yahoo.com/q/rk?s={}+Risk".format(stockTicker)
-                rawHTML = requests.get(riskURL)
-                soup = BeautifulSoup(rawHTML.content,"html.parser")
+                riskURL = "https://finance.yahoo.com/quote/{}/risk".format(stockTicker)
+
+                #riskURL = "http://finance.yahoo.com/q/rk?s={}+Risk".format(stockTicker)
+#                rawHTML = requests.get(riskURL)
+#                soup = BeautifulSoup(rawHTML.content,"html.parser")
+                page = urllib.urlopen(riskURL)
+                content = page.read().decode('utf-8')
+                soup = BeautifulSoup(content, 'html.parser')
 
                 # Relative Risk
-                g_data = soup.find("table", {"class": "yfnc_tableout1"})
-                stdevWordTD = g_data.find('td',text='Standard Deviation')
-                stdevValueTD = stdevWordTD.findNext('td')
-                stdevCatTD = stdevValueTD.findNext('td')
-                stdevValue = float(stdevValueTD.text)
-                stdevCat = float(stdevCatTD.text)
+ #              g_data = soup.find("table", {"class": "yfnc_tableout1"})
+ #              stdevWordTD = g_data.find('td',text='Standard Deviation')
+ #              stdevValueTD = stdevWordTD.findNext('td')
+ #              stdevCatTD = stdevValueTD.findNext('td')
+#                stdevValue = float(stdevValueTD.text)
+                stdevValue = float(soup.find("span",{"data-reactid":"124","class":"W(39%) Fl(start)"}).text)
+#               stdevCat = float(stdevCatTD.text)
+                stdevCat = float(soup.find("span",{"data-reactid":"125","class":"W(57%) Mend(5px) Fl(end)"}).text)
+
                 SmiRelRisk = numpy.float64(stdevValue/stdevCat)
 
                 # Alpha
-                alphaWordTD = g_data.find('td',text='Alpha (against Standard Index)')
-                alphaValueTD = alphaWordTD.findNext('td')
-                alphaValue = float(alphaValueTD.text)
+#               alphaWordTD = g_data.find('td',text='Alpha (against Standard Index)')
+#               alphaValueTD = alphaWordTD.findNext('td')
+#               alphaValue = float(alphaValueTD.text)
+                alphaValue = float(soup.find("span",{"data-reactid":"64","class":"W(39%) Fl(start)"}).text)
 
                 # Beta
-                betaWordTD = g_data.find('td',text='Beta (against Standard Index)')
-                betaValueTD = betaWordTD.findNext('td')
-                betaValue = float(betaValueTD.text)
+#                betaWordTD = g_data.find('td',text='Beta (against Standard Index)')
+#                betaValueTD = betaWordTD.findNext('td')
+#                betaValue = float(betaValueTD.text)
+                betaValue = float(soup.find("span",{"data-reactid":"79","class":"W(39%) Fl(start)"}).text)
+                import pdb; pdb.set_trace() 
 
             except:
                 SmiRelRisk = 'N/A'

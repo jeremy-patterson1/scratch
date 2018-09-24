@@ -218,9 +218,9 @@ def stockMachine():
  #              stdevValueTD = stdevWordTD.findNext('td')
  #              stdevCatTD = stdevValueTD.findNext('td')
 #                stdevValue = float(stdevValueTD.text)
-                stdevValue = float(soup.find("span",{"data-reactid":"124","class":"W(39%) Fl(start)"}).text)
+                stdevValue = float(soup.find("span",{"data-reactid":"121"}).text)
 #               stdevCat = float(stdevCatTD.text)
-                stdevCat = float(soup.find("span",{"data-reactid":"125","class":"W(57%) Mend(5px) Fl(end)"}).text)
+                stdevCat = float(soup.find("span",{"data-reactid":"122"}).text)
 
                 SmiRelRisk = numpy.float64(stdevValue/stdevCat)
 

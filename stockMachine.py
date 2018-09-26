@@ -154,8 +154,10 @@ def stockMachine():
             # Get some data from Yahoo Finance
             #f=web.DataReader("F", 'yahoo', start, end)
             #stockData = web.DataReader(stockTicker, 'yahoo', year_3, calcDate)
-            stockData = yf.download(stockTicker, start=year_3, end=calcDate)
-
+            try:
+               stockData = yf.download(stockTicker, start=year_3, end=calcDate)
+            except:
+               import pdb; pdb.set_trace()
             stockDates = stockData.index
             closeCurrDay = stockData.ix[stockDates[-1]]['Adj Close']
 
@@ -239,13 +241,33 @@ def stockMachine():
 #               alphaWordTD = g_data.find('td',text='Alpha (against Standard Index)')
 #               alphaValueTD = alphaWordTD.findNext('td')
 #               alphaValue = float(alphaValueTD.text)
-                alphaValue = float(soup.find("span",{"data-reactid":"64","class":"W(39%) Fl(start)"}).text)
 
+                alpha=[]
+                alpha_span = next(x for x in soup.find_all('span') if x.text == "Alpha")
+                parent_div = alpha_span.parent
+                for sibling in parent_div.next_siblings:
+                  for child in sibling.children:
+                     # do something
+                     #print(child.text)
+                     alpha.append((child.text).encode("utf-8"))
+
+#                alphaValue = float(soup.find("span",{"data-reactid":"64","class":"W(39%) Fl(start)"}).text)
+                alphaValue = float(alpha[0])
                 # Beta
 #                betaWordTD = g_data.find('td',text='Beta (against Standard Index)')
 #                betaValueTD = betaWordTD.findNext('td')
 #                betaValue = float(betaValueTD.text)
-                betaValue = float(soup.find("span",{"data-reactid":"79","class":"W(39%) Fl(start)"}).text)
+                beta=[]
+                beta_span = next(x for x in soup.find_all('span') if x.text == "Beta")
+                parent_div = beta_span.parent
+                for sibling in parent_div.next_siblings:
+                  for child in sibling.children:
+                     # do something
+                     #print(child.text)
+                     beta.append((child.text).encode("utf-8"))
+
+                betaValue = float(beta[0])
+#                betaValue = float(soup.find("span",{"data-reactid":"79","class":"W(39%) Fl(start)"}).text)
 #                import pdb; pdb.set_trace() 
 
             except:

@@ -15,6 +15,7 @@ import argparse
 import codecs
 import sys
 import time
+import urllib
 
 # email packages: http://kutuma.blogspot.com/2007/08/sending-emails-via-gmail-with-python.html
 import smtplib
@@ -199,7 +200,7 @@ def stockMachine():
             sharpeRatio = numpy.sqrt(250) * numpy.mean(stockData['Adj Close']) / numpy.std(stockData['Adj Close'])
 
             ##################
-            import pdb; pdb.set_trace()
+#            import pdb; pdb.set_trace()
 
             try:
                 #%% Calculate the stock people's STDev using stockSTD/categorySTD
@@ -218,10 +219,20 @@ def stockMachine():
  #              stdevValueTD = stdevWordTD.findNext('td')
  #              stdevCatTD = stdevValueTD.findNext('td')
 #                stdevValue = float(stdevValueTD.text)
-                stdevValue = float(soup.find("span",{"data-reactid":"121"}).text)
+                std_span = next(x for x in soup.find_all('span') if x.text == "Standard Deviation")
+                parent_div = std_span.parent
+                std=[]
+                for sibling in parent_div.next_siblings:
+                  for child in sibling.children:
+                     # do something
+                     #print(child.text)
+                     std.append((child.text).encode("utf-8"))
+                
+                stdevValue = float(std[0])
+                #stdevValue = float(soup.find("span",{"data-reactid":"121"}).text)
 #               stdevCat = float(stdevCatTD.text)
-                stdevCat = float(soup.find("span",{"data-reactid":"122"}).text)
-
+                #stdevCat = float(soup.find("span",{"data-reactid":"122"}).text)
+                stdevCat = float(std[1])
                 SmiRelRisk = numpy.float64(stdevValue/stdevCat)
 
                 # Alpha
@@ -235,7 +246,7 @@ def stockMachine():
 #                betaValueTD = betaWordTD.findNext('td')
 #                betaValue = float(betaValueTD.text)
                 betaValue = float(soup.find("span",{"data-reactid":"79","class":"W(39%) Fl(start)"}).text)
-                import pdb; pdb.set_trace() 
+#                import pdb; pdb.set_trace() 
 
             except:
                 SmiRelRisk = 'N/A'

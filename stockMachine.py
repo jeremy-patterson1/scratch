@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+import pdb, traceback, sys 
+
 import fix_yahoo_finance as yf
 yf.pdr_override()
 from pandas_datareader import data as pdr
@@ -135,7 +137,6 @@ def stockMachine():
         stockTicker = allData[0]
         category = allData[1]
 
-
         tickerIndex = tickerIndex + 1
 
         if tickerIndex < 5:
@@ -157,7 +158,14 @@ def stockMachine():
             try:
                stockData = yf.download(stockTicker, start=year_3, end=calcDate)
             except:
-               import pdb; pdb.set_trace()
+#               extype, value, tb = sys.exc_info()
+#               traceback.print_exc()
+#               pdb.post_mortem(tb)
+
+               if stockData == None:
+                   print 'yahoo did not return any data for ' + stockTicker
+
+               continue
             stockDates = stockData.index
             closeCurrDay = stockData.ix[stockDates[-1]]['Adj Close']
 
